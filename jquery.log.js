@@ -83,10 +83,10 @@
 				  	write_to_console( options( this ), this);
 				  	break
 				  case 'object':
-				  	$.extend( settings, options );
+				  	$.extend( Logger.settings, options );
 				  	break
 				  case 'boolean':
-				  	settings.active = options;
+				  	Logger.settings.active = options;
 				  	break
 				  default:
 				  	$.error('Unsupported parameter passed to logger');
