@@ -51,7 +51,10 @@
 		 */
 		log: function( options, log_level, obj ) {
 			
-			var _s = Logger.settings;
+			var _s = Logger.settings, _l = Logger.levels;
+			
+			if( !_s.active ) return;
+			if( _l[log_level] < _l[_s.log_level] ) return;
 			
 			function write_to_console( msg, level, obj ){
 				if( _s.active ){
@@ -61,25 +64,23 @@
 						return;
 					}
 					
-					if ( Logger.levels[level] <= Logger.levels[_s.log_level] ) {
-						switch( level ){
-							case 'info':
-								console.info("%s: %o", msg, obj);
-								break
-							case 'debug':
-								console.debug("%s: %o", msg, obj);
-								break
-							case 'warn':
-								console.warn("%s: %o", msg, obj);
-								break
-							case 'error':
-								console.error("%s: %o", msg, obj);
-								break
-							case 'log':
-							default:
-								console.log("%s: %o", msg, obj);
-								break
-						}
+					switch( level ){
+						case 'info':
+							console.info("%s: %o", msg, obj);
+							break
+						case 'debug':
+							console.debug("%s: %o", msg, obj);
+							break
+						case 'warn':
+							console.warn("%s: %o", msg, obj);
+							break
+						case 'error':
+							console.error("%s: %o", msg, obj);
+							break
+						case 'log':
+						default:
+							console.log("%s: %o", msg, obj);
+							break
 					}
 				}
 			}
@@ -91,7 +92,7 @@
 					console.group('Console log for: "'+ obj.selector+'"');
 				}
 			}
-			
+		
 			collection = obj.each(function(){
 				switch( typeof options ){
 					case 'string':
@@ -111,8 +112,8 @@
 				};
 			});
 			
-			if( _s.windows_safe ) console.groupEnd();
-			if( _s.backtrace )    console.trace();
+			if( !_s.windows_safe ) console.groupEnd();
+			if( _s.backtrace )     console.trace();
 			
 			return collection;
   	} // EOF Logger.init
