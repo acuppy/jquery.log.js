@@ -14,21 +14,17 @@ This will output a console.log message with the included jQuery element as an as
 Extended default settings by first calling +$.log+ function with a hash of parameters
 
     $.log({
-    	// activate the logger
-			active: true,
+    
+    active: true, /* activate the logger */
 			
-			// outputs console.trace() after the log has been written
-			backtrace: false,
-			
-			// auto collapses console.log groups
-			collapsed: false,
-			
-			// sets the default log level for console output
-			// available log levels:  info, debug, warn, error, log
-			log_level: 'debug',
-			
-			// replaces console.log with alert popup
-			windows_safe: false
+		backtrace: false, /* outputs console.trace() after the log has been written */
+		
+		collapsed: false, /* auto collapses console.log groups */
+		
+		log_level: 'debug', /* available log levels:  info, debug, warn, error */
+		
+		windows_safe: false /* replaces console.log with alert popup */
+		
     });
 
 Depending on current +log_level+ only messsage of greater severity are passed.  
