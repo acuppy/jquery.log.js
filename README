@@ -1,4 +1,0 @@
-jQuery Console Logger
-
-This is a wrapper plugin to the Firebug console log.  
-It allow you to attach and output log messages relating to a jQuery selected element.
