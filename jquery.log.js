@@ -19,11 +19,13 @@
 			// outputs console.trace() after the log has been written
 			backtrace: false,
 			
+			// enables grouping
+			group : true,
+			
 			// auto collapses console.log groups
 			collapsed: false,
 			
 			// sets the default log level for console output
-			//
 			// available log levels:  info, debug, warn, error, log
 			log_level: 'debug',
 			
@@ -85,7 +87,7 @@
 				}
 			}
 			
-			if( !_s.windows_safe ){
+			if( !_s.windows_safe && _s.group ){
 				if( _s.collapsed ){
 					console.groupCollapsed('Console log for: "'+ obj.selector+'"');
 				} else {
@@ -112,8 +114,8 @@
 				};
 			});
 			
-			if( !_s.windows_safe ) console.groupEnd();
-			if( _s.backtrace )     console.trace();
+			if( !_s.windows_safe && _s.group ) console.groupEnd();
+			if( _s.backtrace ) console.trace();
 			
 			return collection;
   	} // EOF Logger.init
