@@ -28,9 +28,6 @@ Extended default settings by first calling +$.log+ function with a hash of param
 
     	 /* available log levels:  info, debug, warn, error */
     	log_level: 'debug',
-    	
-    	/* replaces console.log with alert popup */
-    	windows_safe: false 
     });
 
 Depending on current +log_level+ only messsage of greater severity are passed.  
@@ -46,9 +43,3 @@ To set a message severity, provide the 2nd paramater a string. If the conditions
 but this one, would...
 
     $('div.title').hide().log('Title hidden', 'warn');
-    
-If +console.log+ is not available then you can enable +windows_safe+ and an alert message will be presented
-
-    $.log({
-    	windows_safe : true
-    });
