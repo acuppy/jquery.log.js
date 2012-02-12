@@ -27,20 +27,17 @@
 			
 			// sets the default log level for console output
 			// available log levels:  info, debug, warn, error, log
-			log_level: 'debug',
-			
-			// replaces console.log with alert popup
-			windows_safe: false
+			log_level: 'debug'
 		},
 		
 		/**
 		 * Log level conversion
 		 */
 		levels : {
-			'info'  : 0,
-			'debug' : 1,
-			'warn'  : 2,
-			'error' : 3
+			info  : 0,
+			debug : 1,
+			warn  : 2,
+			error : 3
 		},
 	
 		/**
@@ -55,66 +52,53 @@
 			
 			var _s = Logger.settings, _l = Logger.levels;
 			
-			if( !_s.active ) return;
-			if( _l[log_level] < _l[_s.log_level] ) return;
+			if( !window.console || !_s.active || (_l[log_level] < _l[_s.log_level]) || !window.console[log_level] ) return;
 			
 			function write_to_console( msg, level, obj ){
-				if( _s.active ){
-					
-					if( _s.windows_safe ){
-						alert( msg );
-						return;
-					}
-					
-					switch( level ){
-						case 'info':
-							console.info("%s: %o", msg, obj);
-							break
-						case 'debug':
-							console.debug("%s: %o", msg, obj);
-							break
-						case 'warn':
-							console.warn("%s: %o", msg, obj);
-							break
-						case 'error':
-							console.error("%s: %o", msg, obj);
-							break
-						case 'log':
-						default:
-							console.log("%s: %o", msg, obj);
-							break
-					}
-				}
+				switch( level ){
+				case 'info':
+					console.info("%s: %o", msg, obj);
+					break
+				case 'debug':
+					console.debug("%s: %o", msg, obj);
+					break
+				case 'warn':
+					console.warn("%s: %o", msg, obj);
+					break
+				case 'error':
+					console.error("%s: %o", msg, obj);
+					break
+				case 'log':
+				default:
+					console.log("%s: %o", msg, obj);
+					break	
+				};
 			}
 			
-			if( !_s.windows_safe && _s.group ){
-				if( _s.collapsed ){
-					console.groupCollapsed('Console log for: "'+ obj.selector+'"');
-				} else {
-					console.group('Console log for: "'+ obj.selector+'"');
-				}
+			if( _s.group ){
+				_s.collapsed ? console.groupCollapsed('Console log for: "'+ obj.selector+'"') : console.group('Console log for: "'+ obj.selector+'"');
 			}
 		
 			collection = obj.each(function(){
 				switch( typeof options ){
-					case 'string':
-						write_to_console( options, log_level, this);
-						break
-				  case 'function':
+				case 'string':
+					write_to_console( options, log_level, this);
+					break
+			  	case 'function':
 				  	write_to_console( options( this ), log_level, this);
 				  	break
-				  case 'object':
-				  	$.extend( _s, options );
-				  	break
-				  case 'boolean':
-				  	_s.active = options;
-				  	break
-				  default:
-				  	$.error('Unsupported parameter passed to logger');
+			  	case 'object':
+			  		$.extend( _s, options );
+			  		break
+			  	case 'boolean':
+			  		_s.active = options;
+			  		break
+			  	default:
+			  		$.error('Unsupported param4eter passed to logger');
 				};
 			});
 			
-			if( !_s.windows_safe && _s.group ) console.groupEnd();
+			if( _s.group ) console.groupEnd();
 			if( _s.backtrace ) console.trace();
 			
 			return collection;
@@ -127,30 +111,31 @@
    * @param {Mixed} options : mixed use
    * @return void
    */
-  $.log = function( options ){
-  	try {
-  		var _s = Logger.settings;
+  	$.log = function( options ){
+  		try {
+  			var _s = Logger.settings;
   		
-	  	if( typeof arguments[1] != 'string' ) log_level = 'info';
+	  		if( typeof arguments[1] != 'string' ) log_level = 'debug';
 	  			
 			switch( typeof options ){
-				case 'string':
-					Logger.log( options, log_level, $(document) );
-					break
-			  case 'function':
+			case 'string':
+				Logger.log( options, log_level, $(document) );
+				break
+			case 'function':
 			  	Logger.log( options(), log_level, $(document) );
 			  	break
-			  case 'object':
+			case 'object':
 			  	$.extend( _s, options );
 			  	break
-			  case 'boolean':
+			case 'boolean':
 			  	_s.active = options;
 			  	break
-			  default:
-			  	$.error('Unsupported parameter passed to logger');
+			default:
+			  	Logger.log('Unsupported parameter passed to logger');
 			};
+
 		} catch(err) {
-			console.log('Logger had the following error: '+ err.toString());
+			$.error('Logger had the following error: '+ err.toString());
 		}
 	};
 	
@@ -165,7 +150,7 @@
 		try {	
 			Logger.log( msg, log_level, scope || this);
 		} catch(err) {
-			console.log('Logger had the following error: '+ err.toString());
+			$.error('Logger had the following error: '+ err.toString());
 		}
 		return this;
 	}
