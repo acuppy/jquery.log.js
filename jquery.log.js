@@ -1,158 +1,97 @@
-/**
- * jquery.log.js
- * 
- * @version 0.2.1
- * @author Adam Cuppy 
- * @copyright http://defineyouredge.com
- * 
- */ 
+(function() {
+  var $, Logger;
 
-(function( $ ){
-	
-	var Logger = {
-		
-		settings: {
-			
-			// activate the logger
-			active: true,
-			
-			// outputs console.trace() after the log has been written
-			backtrace: false,
-			
-			// enables grouping
-			group : true,
-			
-			// auto collapses console.log groups
-			collapsed: false,
-			
-			// sets the default log level for console output
-			// available log levels:  info, debug, warn, error, log
-			log_level: 'debug'
-		},
-		
-		/**
-		 * Log level conversion
-		 */
-		levels : {
-			info  : 0,
-			debug : 1,
-			warn  : 2,
-			error : 3
-		},
-	
-		/**
-		 * initialized the plugin and logs the message
-		 * 
-		 * @param {Mixed} options : hash of configuration options or a String which is the messages
-		 * @param {String} log_level : of this message only
-		 * @param {Object} obj : associated jQuery object
-		 * @return void
-		 */
-		log: function( options, log_level, obj ) {
-			
-			var _s = Logger.settings, _l = Logger.levels;
-			
-			if( !window.console || !_s.active || (_l[log_level] < _l[_s.log_level]) || !window.console[log_level] ) return;
-			
-			function write_to_console( msg, level, obj ){
-				switch( level ){
-				case 'info':
-					console.info("%s: %o", msg, obj);
-					break
-				case 'debug':
-					console.debug("%s: %o", msg, obj);
-					break
-				case 'warn':
-					console.warn("%s: %o", msg, obj);
-					break
-				case 'error':
-					console.error("%s: %o", msg, obj);
-					break
-				case 'log':
-				default:
-					console.log("%s: %o", msg, obj);
-					break	
-				};
-			}
-			
-			if( _s.group ){
-				_s.collapsed ? console.groupCollapsed('Console log for: "'+ obj.selector+'"') : console.group('Console log for: "'+ obj.selector+'"');
-			}
-		
-			collection = obj.each(function(){
-				switch( typeof options ){
-				case 'string':
-					write_to_console( options, log_level, this);
-					break
-			  	case 'function':
-				  	write_to_console( options( this ), log_level, this);
-				  	break
-			  	case 'object':
-			  		$.extend( _s, options );
-			  		break
-			  	case 'boolean':
-			  		_s.active = options;
-			  		break
-			  	default:
-			  		$.error('Unsupported param4eter passed to logger');
-				};
-			});
-			
-			if( _s.group ) console.groupEnd();
-			if( _s.backtrace ) console.trace();
-			
-			return collection;
-  	} // EOF Logger.init
-  }; // EOF Logger
-  
-  /**
-   * Shorthand logging method
-   * 
-   * @param {Mixed} options : mixed use
-   * @return void
-   */
-  	$.log = function( options ){
-  		try {
-  			var _s = Logger.settings;
-  		
-	  		if( typeof arguments[1] != 'string' ) log_level = 'debug';
-	  			
-			switch( typeof options ){
-			case 'string':
-				Logger.log( options, log_level, $(document) );
-				break
-			case 'function':
-			  	Logger.log( options(), log_level, $(document) );
-			  	break
-			case 'object':
-			  	$.extend( _s, options );
-			  	break
-			case 'boolean':
-			  	_s.active = options;
-			  	break
-			default:
-			  	Logger.log('Unsupported parameter passed to logger');
-			};
+  $ = jQuery;
 
-		} catch(err) {
-			$.error('Logger had the following error: '+ err.toString());
-		}
-	};
-	
-	/**
-	 * Initiates the chain-ability of the plugin
-	 * 
-	 * @param {Mixed} msg : string log message OR callback to initiate to make a log entry
-	 * @param {String} log_level : string representing the log_level
-	 * @return {jQuery} passthru of the original object
-	 */
-	$.fn.log = function( msg, log_level, scope ){
-		try {	
-			Logger.log( msg, log_level, scope || this);
-		} catch(err) {
-			$.error('Logger had the following error: '+ err.toString());
-		}
-		return this;
-	}
-  
-})( jQuery );
+  Logger = {
+    settings: {
+      active: true,
+      backtrace: false,
+      group: true,
+      collapsed: false,
+      log_level: 'debug'
+    },
+    levels: {
+      info: 0,
+      debug: 1,
+      warn: 2,
+      error: 3
+    },
+    log: function(options, log_level, obj) {
+      var collection, write_to_console, _l, _s;
+      _s = Logger.settings;
+      _l = Logger.levels;
+      if (!window.console || !_s.active || (_l[log_level] < _l[_s.log_level]) || !window.console[log_level]) {
+        return;
+      }
+      write_to_console = function(msg, level, obj) {
+        switch (level) {
+          case 'info':
+            return console.info("%s: %o", msg, obj);
+          case 'debug':
+            return console.debug("%s: %o", msg, obj);
+          case 'warn':
+            return console.warn("%s: %o", msg, obj);
+          case 'error':
+            return console.error("%s: %o", msg, obj);
+          case 'log':
+            return console.log("%s: %o", msg, obj);
+        }
+      };
+      if (_s.group) {
+        if (_s.collapsed) {
+          console.groupCollapsed('Console log for: "' + obj.selector + '"');
+        } else {
+          console.group('Console log for: "' + obj.selector + '"');
+        }
+      }
+      collection = obj.each(function() {
+        switch (typeof options) {
+          case 'string':
+            return write_to_console(options, log_level, this);
+          case 'function':
+            return write_to_console(options(this, log_level, this));
+          case 'object':
+            return $.extend(_s, options);
+          case 'boolean':
+            return _s.active = options;
+        }
+      });
+      if (_s.group) console.groupEnd();
+      if (_s.backtrace) console.trace();
+      return collection;
+    }
+  };
+
+  $.log = function(options) {
+    var log_level, _s;
+    try {
+      _s = Logger.settings;
+      if (typeof arguments[1] !== 'string') log_level = 'debug';
+      switch (typeof options) {
+        case 'string':
+          return Logger.log(options, log_level, $(document));
+        case 'function':
+          return Logger.log(options(), log_level, $(document));
+        case 'object':
+          return $.extend(_s, options);
+        case 'boolean':
+          return _s.active = options;
+        default:
+          return Logger.log('Unsupported parameter passed to logger');
+      }
+    } catch (err) {
+      return $.error('Logger had the following error: ' + err.toString());
+    }
+  };
+
+  $.fn.log = function(msg, log_level, scope) {
+    try {
+      Logger.log(msg, log_level, scope || this);
+    } catch (err) {
+      $.error('Logger had the following error: ' + err.toString());
+    }
+    return this;
+  };
+
+}).call(this);
