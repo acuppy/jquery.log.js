@@ -21,24 +21,13 @@
       var collection, write_to_console, _l, _s;
       _s = Logger.settings;
       _l = Logger.levels;
-      if (!window.console || !_s.active || (_l[log_level] < _l[_s.log_level]) || !window.console[log_level]) {
+      if (!(window.console != null) || !(_s.active != null) || (_l[log_level] < _l[_s.log_level]) || !window.console[log_level]) {
         return;
       }
       write_to_console = function(msg, level, obj) {
-        switch (level) {
-          case 'info':
-            return console.info("%s: %o", msg, obj);
-          case 'debug':
-            return console.debug("%s: %o", msg, obj);
-          case 'warn':
-            return console.warn("%s: %o", msg, obj);
-          case 'error':
-            return console.error("%s: %o", msg, obj);
-          case 'log':
-            return console.log("%s: %o", msg, obj);
-        }
+        if (console[level] != null) console[level]("%s: %o", msg, obj);
       };
-      if (_s.group) {
+      if (_s.group != null) {
         if (_s.collapsed) {
           console.groupCollapsed('Console log for: "' + obj.selector + '"');
         } else {
@@ -46,7 +35,7 @@
         }
       }
       collection = obj.each(function() {
-        switch (typeof options) {
+        switch ($.type(options)) {
           case 'string':
             return write_to_console(options, log_level, this);
           case 'function':
@@ -67,8 +56,8 @@
     var log_level, _s;
     try {
       _s = Logger.settings;
-      if (typeof arguments[1] !== 'string') log_level = 'debug';
-      switch (typeof options) {
+      if ($.type(arguments[1]) !== 'string') log_level = 'debug';
+      switch ($.type(options)) {
         case 'string':
           return Logger.log(options, log_level, $(document));
         case 'function':
