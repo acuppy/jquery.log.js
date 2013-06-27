@@ -4,13 +4,36 @@
     it("binds to the jQuery object", function() {
       return expect($.log).toBeDefined();
     });
-    return describe("options", function() {
+    it("only activates if window.console exists", function() {
+      spyOn(window, 'console').andReturn(void 0);
+      $.log('message');
+      return expect(window.console).not.toHaveBeenCalled();
+    });
+    it("only calls with a valid log_level", function() {
+      spyOn(console, 'debug');
+      $.log('message', 'foo');
+      return expect(console.debug).not.toHaveBeenCalled();
+    });
+    it("only calls with a log_level greater than minimum threshold", function() {
+      spyOn(console, 'debug');
+      spyOn(console, 'warn');
+      $.log({
+        log_level: 'warn'
+      });
+      $.log('message', 'debug');
+      expect(console.debug).not.toHaveBeenCalled();
+      expect(console.warn).not.toHaveBeenCalled();
+      return $.log({
+        log_level: 'debug'
+      });
+    });
+    describe("options", function() {
       beforeEach(function() {
-        spyOn(console, 'info').andCallThrough();
-        spyOn(console, 'debug').andCallThrough();
-        spyOn(console, 'warn').andCallThrough();
-        spyOn(console, 'error').andCallThrough();
-        return spyOn(console, 'log').andCallThrough();
+        spyOn(console, 'info');
+        spyOn(console, 'debug');
+        spyOn(console, 'warn');
+        spyOn(console, 'error');
+        return spyOn(console, 'log');
       });
       return describe("when receiving a string", function() {
         it("should set the default log_level to debug", function() {
@@ -37,6 +60,38 @@
           expect($.extend).not.toHaveBeenCalled();
           return expect(console.debug).not.toHaveBeenCalled();
         });
+      });
+    });
+    return describe("settings", function() {
+      beforeEach(function() {
+        spyOn(console, 'group');
+        spyOn(console, 'groupCollapsed');
+        spyOn(console, 'groupEnd');
+        return spyOn(console, 'trace');
+      });
+      it("should display the backtrace", function() {
+        $.log({
+          backtrace: true
+        });
+        $.log('message');
+        return expect(console.trace).toHaveBeenCalled();
+      });
+      it("should display grouped", function() {
+        $.log({
+          group: true
+        });
+        $.log('message');
+        expect(console.group).toHaveBeenCalled();
+        return expect(console.groupEnd).toHaveBeenCalled();
+      });
+      return it("should display groupCollapsed", function() {
+        $.log({
+          group: true,
+          collapsed: true
+        });
+        $.log('message');
+        expect(console.groupCollapsed).toHaveBeenCalled();
+        return expect(console.groupEnd).toHaveBeenCalled();
       });
     });
   });

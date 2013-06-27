@@ -20,19 +20,25 @@ Logger =
     _s = Logger.settings
     _l = Logger.levels
     
-    return if !window.console? or !_s.active? or (_l[log_level] < _l[_s.log_level]) or !window.console[log_level] 
+    return if !window.console? or !_s.active or (_l[log_level] < _l[_s.log_level]) or !window.console[log_level] 
     
-    write_to_console = (msg, level, obj) ->
-      console[level]("%s: %o", msg, obj) if console[level]?
+    write_to_console = (msg, obj) ->
+      console[log_level]("%s: %o", msg, obj)
       return
       
-    if _s.group?
-      if _s.collapsed then console.groupCollapsed 'Console log for: "'+ obj.selector+'"' else console.group 'Console log for: "'+ obj.selector+'"'
+    if _s.group
+
+      output = "Console log: \"#{obj.selector or "document"}\""
+
+      if _s.collapsed 
+        console.groupCollapsed output
+      else 
+        console.group output
     
     collection = obj.each -> 
       switch $.type options
-        when 'string'   then write_to_console options, log_level, this
-        when 'function' then write_to_console options this, log_level, this
+        when 'string'   then write_to_console options, this
+        when 'function' then write_to_console options.call(this), this
         when 'object'   then $.extend _s, options
         when 'boolean'  then _s.active = options
 
@@ -44,7 +50,7 @@ $.log = (options) ->
   try
     _s = Logger.settings
     
-    log_level = 'debug' if $.type(arguments[1]) != 'string'
+    log_level = if $.type(arguments[1]) == 'string' then arguments[1] else 'debug'
 
     switch $.type options
       when 'string'   then Logger.log options, log_level, $(document)
