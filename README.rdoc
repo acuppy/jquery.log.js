@@ -1,4 +1,5 @@
-== Summary
+== jQuery Log Wrapper
+{<img src="https://codeclimate.com/github/acuppy/jquery.log.js.png" />}[https://codeclimate.com/github/acuppy/jquery.log.js]
 
 jQuery logger is a tool to inobtrusively trigger a console.log message with an associated jQuery element.  This code can be turned on/off for development/production without being removed.
 The logger supports multiple log levels, grouped messages and a backtrace.
