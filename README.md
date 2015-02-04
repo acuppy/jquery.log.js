@@ -1,4 +1,4 @@
-## jQuery Log Wrapper
+## jQuery console.log() Wrapper
 [<img src="https://codeclimate.com/github/acuppy/jquery.log.js.png"
 />](https://codeclimate.com/github/acuppy/jquery.log.js)
 
