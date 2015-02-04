@@ -30,7 +30,7 @@ $.log({
   /* outputs console.trace() after the log has been written */
   backtrace: false,
 
-  /* enable grouping of console.log
+  /* enable grouping of console.log */
   group: true,
 
   /* auto collapses console.log groups */
